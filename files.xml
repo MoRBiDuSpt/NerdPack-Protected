@@ -11,6 +11,7 @@
 	<Script file="wToolkit64.lua" />
 	<Script file="customOcr.lua" />
 	<Script file="pxb.lua" />
+	<Script file="apep.lua" />
 	<!--Script file="super_secret_unlocker_xpto.lua" /-->
 
 </Ui>
