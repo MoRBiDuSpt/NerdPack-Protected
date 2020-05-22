@@ -6,6 +6,23 @@ local g = gbl.gapis
 local max_distance = NeP.Interface:Fetch('NerdPack_Settings', 'OM_Dis', 100)
 local OM_Memory = NeP.OM:Get("Memory")
 
+local SecureApis = {
+	"RunMacroText", "CastSpellByName", "UseItemByName", "UseInventoryItem", "TargetUnit", "SpellStopCasting",
+	"GetNumVoiceSessions", "PickupContainerItem", "SetOverrideBindingClick", "ClearOverrideBindings",
+	"InteractUnit", "CastSpellByID", "MoveAndSteerStart", "MoveAndSteerStop", "RemoveTalent",
+	"LearnTalents", "AssistUnit", "AttackTarget", "CameraOrSelectOrMoveStart", "CameraOrSelectOrMoveStop",
+	"CancelItemTempEnchantment", "CancelLogout", "CancelShapeshiftForm", "CastPetAction", "CastShapeshiftForm",
+	"CastSpell", "ClearTarget", "DescendStop", "DestroyTotem", "FocusUnit", "ForceQuit", "ForceLogout",
+	"Logout", "JumpOrAscendStart", "MoveBackwardStart", "MoveBackwardStop", "MoveForwardStart",
+	"MoveForwardStop", "PetAssistMode", "PetAttack", "PetDefensiveAssistMode", "PetDefensiveMode", "PetFollow",
+	"PetPassiveMode", "PetWait", "Quit", "RegisterForSave", "ReplaceEnchant", "ReplaceTradeEnchant", "RunMacro",
+	"SetMoveEnabled", "SetTurnEnabled", "SitStandOrDescendStart", "SpellStopTargeting", "SpellTargetUnit",
+	"StrafeLeftStart", "StrafeLeftStop", "StrafeRightStart", "StrafeRightStop", "Stuck", "SwapRaidSubgroup",
+	"TargetLastEnemy", "TargetLastTarget", "TargetNearestEnemy", "TargetNearestFriend", "ToggleAutoRun",
+	"ToggleRun", "TurnLeftStart", "TurnLeftStop", "TurnOrActionStart", "TurnOrActionStop", "TurnRightStart",
+	"TurnRightStop", "UseAction", "UseContainerItem", "UseToy", "UseToyByName"
+}
+
 local function om()
 	local count  = g.GetObjectCount(max_distance)
 	for i = 1, count do
@@ -17,6 +34,18 @@ local function om()
 end
 
 function f.Load()
+	local apep = Apep.funcs
+	for _, api in pairs(SecureApis) do
+		f[api] = apep[api]
+	end
+
+	f.Macro = f.RunMacroText
+	f.Cast = f.CastSpellByName
+	f.UseItem = f.UseItemByName
+	f.UseInvItem = f.UseInventoryItem
+	f.TargetUnit = f.TargetUnit
+	f.SpellStopCasting = f.SpellStopCasting
+
 	NeP.Protected.nPlates = nil
 	NeP.Timer.Add('nep_apep_om', om, 1)
 end
@@ -44,12 +73,12 @@ end
 function f.CastGround(spell, target)
 	-- fallback to generic if we can cast it using macros
 	if gbl.validGround[target] then
-		return gbl.Generic.CastGround(spell, target)
+		return f.Macro("/cast [@"..target.."]"..spell)
 	end
 	if not NeP.DSL:Get('exists')(target) then return end
 	-- Need to know if the spell comes from a Item for use UseItemByName or CastSpellByName
 	local IsItem = NeP._G.GetItemSpell(spell)
-	local func = IsItem and gbl.Generic.UseItem or gbl.Generic.Cast
+	local func = IsItem and f.UseItem(spell) or f.Cast(spell)
 	local oX, oY, oZ = NeP._G.ObjectPosition(target)
 	local rX, rY = math.random(), math.random()
 	if oX then
