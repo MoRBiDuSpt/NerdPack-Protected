@@ -34,18 +34,12 @@ local function om()
 end
 
 function f.Load()
-	local apep = Apep.funcs
-	for _, api in pairs(SecureApis) do
-		f[api] = apep[api]
-	end
-
 	f.Macro = f.RunMacroText
 	f.Cast = f.CastSpellByName
 	f.UseItem = f.UseItemByName
 	f.UseInvItem = f.UseInventoryItem
 	f.TargetUnit = f.TargetUnit
 	f.SpellStopCasting = f.SpellStopCasting
-
 	NeP.Protected.nPlates = nil
 	NeP.Timer.Add('nep_apep_om', om, 1)
 end
