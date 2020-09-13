@@ -8,7 +8,7 @@ local OM_Memory = NeP.OM:Get("Memory")
 
 local SecureApis = {
 	"RunMacroText", "CastSpellByName", "UseItemByName", "UseInventoryItem", "TargetUnit", "SpellStopCasting",
-	"GetNumVoiceSessions", "PickupContainerItem", "SetOverrideBindingClick", "ClearOverrideBindings",
+	"GetNumVoiceSessions", "PickupContainerItem", "SetOverrideBindingClick", "ClearOverrideBindings", "RunBinding",
 	"InteractUnit", "CastSpellByID", "MoveAndSteerStart", "MoveAndSteerStop", "RemoveTalent",
 	"LearnTalents", "AssistUnit", "AttackTarget", "CameraOrSelectOrMoveStart", "CameraOrSelectOrMoveStop",
 	"CancelItemTempEnchantment", "CancelLogout", "CancelShapeshiftForm", "CastPetAction", "CastShapeshiftForm",
@@ -34,6 +34,10 @@ local function om()
 end
 
 function f.Load()
+	local apep = Apep.funcs
+	for _, api in pairs(SecureApis) do
+		f[api] = apep[api]
+	end
 	f.Macro = f.RunMacroText
 	f.Cast = f.CastSpellByName
 	f.UseItem = f.UseItemByName
